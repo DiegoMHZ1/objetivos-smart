@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objetivos SMART</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+html { color-scheme: light; }
+body { margin: 0; }
+/* Layout: columna única de lectura sobre una regla de medición; cada letra de SMART es una escala. Una zona interactiva por sección. */
+:root {
+  --bg: #f2f5f7;
+  --surface: #ffffff;
+  --fg: #14212c;
+  --muted: #55646f;
+  --line: #cfd8de;
+  --accent: #0b5cad;
+  --accent-fg: #ffffff;
+  --mark: #ffd84d;
+  --good: #1b7a4b;
+  --bad: #b3341f;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1820; --surface: #16232d; --fg: #e6edf2; --muted: #9db0bd; --line: #2c3d49;
+    --accent: #6db3f2; --accent-fg: #0e1820; --mark: #a88a00; --good: #5cc98f; --bad: #ff8a73;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1820; --surface: #16232d; --fg: #e6edf2; --muted: #9db0bd; --line: #2c3d49;
+  --accent: #6db3f2; --accent-fg: #0e1820; --mark: #a88a00; --good: #5cc98f; --bad: #ff8a73;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 920px; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.6rem, 9vw, 5rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.01em; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+p { margin: 0; max-width: 65ch; }
+.label { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* header with ruler */
+header { padding-block: 40px 28px; display: grid; gap: 18px; }
+.ruler {
+  height: 14px; border-top: 2px solid var(--fg);
+  background:
+    repeating-linear-gradient(90deg, var(--fg) 0 1px, transparent 1px 10px) top / 100% 8px no-repeat,
+    repeating-linear-gradient(90deg, var(--fg) 0 1px, transparent 1px 50px) top / 100% 14px no-repeat;
+}
+.lead { font-size: 1.2rem; color: var(--muted); }
+nav { display: flex; flex-wrap: wrap; gap: 8px 20px; padding-block: 14px; border-block: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.8rem; }
+nav a { text-decoration: none; color: var(--fg); }
+nav a:hover { color: var(--accent); text-decoration: underline; }
+
+section { padding-block: 52px 8px; display: grid; gap: 22px; }
+.mark { background: linear-gradient(transparent 55%, var(--mark) 55%); padding-inline: 2px; }
+.acro { display: flex; flex-wrap: wrap; gap: 10px; }
+.acro span { font-family: var(--font-display); font-weight: 800; font-size: 1rem; background: var(--surface); border: 1px solid var(--line); padding: 6px 12px; }
+.acro b { color: var(--accent); font-size: 1.4rem; margin-right: 4px; }
+
+/* tabs */
+.tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--line); background: var(--surface); }
+.tabs button { font: inherit; background: none; border: 0; border-right: 1px solid var(--line); padding: 14px 4px 10px; cursor: pointer; color: var(--fg); display: grid; gap: 2px; justify-items: center; min-width: 0; }
+.tabs button:last-child { border-right: 0; }
+.tabs .big { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 7vw, 2.8rem); line-height: 1; }
+.tabs .small { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; overflow-wrap: anywhere; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-fg); }
+.tabs button[aria-selected="true"] .small { color: var(--accent-fg); }
+.panel { background: var(--surface); border: 1px solid var(--line); padding: 24px; display: grid; gap: 18px; }
+.question { font-family: var(--font-display); font-size: clamp(1.4rem, 4vw, 1.9rem); font-weight: 600; line-height: 1.2; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pair > div { min-width: 0; padding: 14px 16px; border: 1px solid var(--line); display: grid; gap: 4px; }
+.pair .no { border-left: 5px solid var(--bad); }
+.pair .si { border-left: 5px solid var(--good); }
+.tag-no { color: var(--bad); } .tag-si { color: var(--good); }
+.tip { color: var(--muted); }
+
+/* transformer */
+.stage { background: var(--surface); border: 1px solid var(--line); padding: 24px; display: grid; gap: 18px; }
+.steps { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { font: inherit; font-weight: 600; cursor: pointer; padding: 10px 16px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); }
+.btn:hover { background: var(--accent); color: var(--accent-fg); }
+.btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
+.goal-text { font-family: var(--font-display); font-size: clamp(1.2rem, 3.6vw, 1.6rem); line-height: 1.35; min-height: 4.2em; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-family: var(--font-mono); font-size: 0.75rem; }
+.chip { padding: 2px 8px; border: 1px solid var(--line); }
+.chip.on { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+
+/* builder */
+.builder { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.builder > * { min-width: 0; }
+.fields { display: grid; gap: 14px; }
+.field { display: grid; gap: 4px; }
+.field label { font-weight: 600; }
+.field .hint { font-size: 0.85rem; color: var(--muted); }
+input[type="text"], input[type="date"] { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.out { background: var(--surface); border: 1px solid var(--line); padding: 20px; display: grid; gap: 16px; }
+.sentence { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.4; font-weight: 600; overflow-wrap: anywhere; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.95rem; }
+.checks li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 8px; align-items: baseline; }
+.checks .k { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--muted); }
+.checks li.ok .k { color: var(--good); }
+.checks li.ok .t::before { content: "Cumple. "; color: var(--good); font-weight: 600; }
+.checks li:not(.ok) .t::before { content: "Falta. "; color: var(--bad); font-weight: 600; }
+.meter { height: 10px; background: var(--line); }
+.meter i { display: block; height: 100%; width: 0; background: var(--good); transition: width .25s; }
+.note { font-size: 0.85rem; color: var(--muted); }
+
+/* quiz */
+.q { background: var(--surface); border: 1px solid var(--line); padding: 24px; display: grid; gap: 16px; }
+.q blockquote { margin: 0; font-family: var(--font-display); font-size: 1.25rem; line-height: 1.35; font-weight: 600; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opts .btn { min-width: 3.2rem; font-family: var(--font-display); font-weight: 800; }
+.opts .btn.right { background: var(--good); border-color: var(--good); color: var(--bg); }
+.opts .btn.wrong { background: var(--bad); border-color: var(--bad); color: var(--bg); }
+.fb { min-height: 3.2em; }
+.qbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+
+/* scrum */
+.scrum { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.scrum > div { min-width: 0; background: var(--surface); border: 1px solid var(--line); padding: 18px; display: grid; gap: 6px; align-content: start; }
+.scrum .vague { color: var(--muted); }
+ul.src { margin: 0; padding-left: 1.2rem; display: grid; gap: 8px; }
+footer { padding-top: 40px; }
+
+@media (max-width: 680px) {
+  .pair, .builder, .scrum { grid-template-columns: 1fr; }
+  .tabs .small { font-size: 0.55rem; }
+  .panel, .stage, .q { padding: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="ruler" aria-hidden="true"></div>
+    <span class="label">Técnica de planeación · Tarea individual</span>
+    <h1>Objetivos SMART</h1>
+    <p class="lead">Una forma de escribir una meta para que cualquiera pueda decir, con una fecha y un número, si se cumplió o no.</p>
+    <div class="acro" aria-label="Significado de las siglas">
+      <span><b>S</b>Específico</span><span><b>M</b>Medible</span><span><b>A</b>Alcanzable</span><span><b>R</b>Relevante</span><span><b>T</b>Temporal</span>
+    </div>
+  </header>
+
+  <nav aria-label="Secciones">
+    <a href="#origen">Origen</a><a href="#criterios">Los cinco criterios</a><a href="#antes-despues">Antes y después</a><a href="#constructor">Constructor</a><a href="#practica">Práctica</a><a href="#scrum">En un equipo Scrum</a><a href="#fuentes">Fuentes</a>
+  </nav>
+
+  <section id="origen">
+    <span class="label">Qué es</span>
+    <h2>Una meta bien escrita se puede verificar</h2>
+    <p>La técnica SMART propone cinco condiciones que debe cumplir un objetivo. Se atribuye a George T. Doran, quien la presentó en 1981 en la revista <i>Management Review</i> para ayudar a directivos a redactar metas claras.</p>
+    <p>Hoy se usa en empresas, escuelas y proyectos personales. La idea central es reemplazar frases como <span class="mark">“quiero mejorar”</span> por una redacción con la que ya no haya dudas sobre qué hacer ni cuándo se terminó.</p>
+  </section>
+
+  <section id="criterios">
+    <span class="label">Los cinco criterios</span>
+    <h2>Cada letra responde una pregunta</h2>
+    <div class="tabs" role="tablist" aria-label="Criterios SMART" id="tabs"></div>
+    <div class="panel" id="panel" role="tabpanel" aria-live="polite"></div>
+    <p class="note">La sigla tiene variantes. La A también se lee como <i>Attainable</i> o <i>Assignable</i>, la R como <i>Realistic</i> y la T como <i>Time-bound</i> o <i>Time-based</i>. Esta página usa la versión más común en español.</p>
+  </section>
+
+  <section id="antes-despues">
+    <span class="label">Antes y después</span>
+    <h2>Convierte una meta vaga en una SMART</h2>
+    <p>Elige un ejemplo y avanza paso a paso. Cada criterio que se agrega aparece resaltado en el texto.</p>
+    <div class="stage">
+      <div class="steps" id="examples" role="group" aria-label="Ejemplos"></div>
+      <div class="goal-text" id="goal" aria-live="polite"></div>
+      <div class="legend" id="legend"></div>
+      <div class="steps">
+        <button class="btn" id="prev" type="button">Quitar criterio</button>
+        <button class="btn" id="next" type="button">Agregar criterio</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="constructor">
+    <span class="label">Constructor</span>
+    <h2>Escribe tu propio objetivo</h2>
+    <p>Llena los cinco campos. La página arma la redacción y revisa cada criterio con reglas simples.</p>
+    <div class="builder">
+      <div class="fields">
+        <p class="note">Los campos vienen con un ejemplo. Reemplázalo con tu objetivo.</p>
+        <div class="field"><label for="f-s">S · ¿Qué quiero lograr?</label><input type="text" id="f-s" value="subir mi promedio en la materia de Gestión de Proyectos"><span class="hint">Una acción concreta sobre algo concreto.</span></div>
+        <div class="field"><label for="f-m">M · ¿Cómo lo mediré?</label><input type="text" id="f-m" value="de 8.0 a 8.5 en la escala de 0 a 10"><span class="hint">Incluye una cifra o un indicador.</span></div>
+        <div class="field"><label for="f-a">A · ¿Cómo lo haré?</label><input type="text" id="f-a" value="estudiando 5 horas por semana y entregando todas las prácticas"><span class="hint">Tiempo, recursos y habilidades que sí tienes.</span></div>
+        <div class="field"><label for="f-r">R · ¿Por qué me importa?</label><input type="text" id="f-r" value="necesito ese promedio para conservar mi beca"><span class="hint">Conéctalo con una meta mayor.</span></div>
+        <div class="field"><label for="f-t">T · ¿Para cuándo?</label><input type="date" id="f-t" value="2026-12-11"><span class="hint">Una fecha límite posterior a hoy.</span></div>
+      </div>
+      <div class="out">
+        <span class="label">Tu objetivo</span>
+        <div class="sentence" id="sentence"></div>
+        <ul class="checks" id="checks"></ul>
+        <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+        <div class="steps"><button class="btn" id="copy" type="button">Copiar objetivo</button><span class="note" id="copied" aria-live="polite"></span></div>
+        <p class="note">La revisión es automática y básica: busca cifras, longitud del texto y fecha. Tu criterio sigue siendo lo que decide si el objetivo es bueno.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="practica">
+    <span class="label">Práctica</span>
+    <h2>¿Qué criterio le falta a cada objetivo?</h2>
+    <div class="q">
+      <div class="qbar"><span class="label" id="qcount"></span><span class="label" id="qscore"></span></div>
+      <blockquote id="qtext"></blockquote>
+      <div class="opts" id="qopts" role="group" aria-label="Elige el criterio faltante"></div>
+      <p class="fb" id="qfb" aria-live="polite"></p>
+      <div class="steps"><button class="btn" id="qnext" type="button" hidden>Siguiente</button></div>
+    </div>
+  </section>
+
+  <section id="scrum">
+    <span class="label">En un equipo Scrum</span>
+    <h2>El mismo criterio sirve para la Definition of Done</h2>
+    <p>La Definition of Done del módulo de calificaciones pide que algunos criterios, como la cobertura de pruebas o el tiempo de respuesta, tengan valores medibles. Esa es la M de SMART aplicada a un equipo.</p>
+    <div class="scrum">
+      <div><span class="label">Redacción vaga</span><p class="vague">“La consulta de calificaciones debe cargar rápido y estar bien probada.”</p></div>
+      <div><span class="label">Redacción SMART (ejemplo)</span><p>“Antes del cierre del Sprint, la consulta por periodo responde en menos de 2 segundos con 100 estudiantes simultáneos y las pruebas de CA-01 a CA-05 pasan sin fallos.”</p></div>
+    </div>
+    <p class="note">Los valores del ejemplo son ilustrativos. Cada equipo define los suyos. Scrum no impone un porcentaje universal de cobertura.</p>
+  </section>
+
+  <section id="limites">
+    <span class="label">Alcance de la técnica</span>
+    <h2>Cuándo ayuda y cuándo se queda corta</h2>
+    <p>SMART funciona bien para metas con resultado claro y plazo definido. Se queda corta si el objetivo es exploratorio, porque pide cifras que todavía no se conocen. También puede empujar a elegir metas fáciles de medir y poco ambiciosas.</p>
+    <p>La investigación sobre fijación de metas de Locke y Latham encuentra que las metas específicas y desafiantes suelen producir mejor desempeño que las metas vagas del tipo “haz tu mejor esfuerzo”. Por eso la A de SMART debe leerse como un reto posible y no como una meta cómoda.</p>
+  </section>
+
+  <footer id="fuentes">
+    <span class="label">Fuentes</span>
+    <ul class="src">
+      <li>Doran, G. T. (1981). There's a S.M.A.R.T. way to write management's goals and objectives. <i>Management Review</i>, 70(11), 35–36.</li>
+      <li>Locke, E. A. y Latham, G. P. (2002). Building a practically useful theory of goal setting and task motivation. <i>American Psychologist</i>, 57(9), 705–717.</li>
+      <li>Schwaber, K. y Sutherland, J. (2020). <i>La Guía de Scrum</i>, para el apartado sobre la Definition of Done.</li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var LETTERS = [
+    { k: "S", name: "Específico", q: "¿Qué quiero lograr exactamente?", no: "Mejorar en la escuela.", si: "Subir mi promedio en Bases de Datos.", tip: "Responde qué, quién y dónde. Si dos personas leen el objetivo e imaginan cosas distintas, aún no es específico." },
+    { k: "M", name: "Medible", q: "¿Cómo sabré que lo logré?", no: "Estudiar más.", si: "Estudiar 5 horas por semana y sacar 8.5 en el parcial.", tip: "Usa una cifra, un porcentaje o un entregable que se pueda comprobar. Medir también permite ver el avance a mitad de camino." },
+    { k: "A", name: "Alcanzable", q: "¿Tengo tiempo, recursos y habilidades para lograrlo?", no: "Pasar de 6.0 a 10 en una semana.", si: "Subir de 8.0 a 8.5 en un periodo académico.", tip: "Debe exigir esfuerzo sin ser imposible. Revisa tu tiempo disponible y las herramientas con las que cuentas." },
+    { k: "R", name: "Relevante", q: "¿Por qué importa y con qué se relaciona?", no: "Aprender una herramienta que no uso en mi carrera.", si: "Aprender Git porque el proyecto del equipo lo requiere.", tip: "Un objetivo relevante responde a una meta mayor: una beca, un proyecto, una certificación. Si no se conecta con nada, conviene descartarlo." },
+    { k: "T", name: "Temporal", q: "¿Para cuándo?", no: "Algún día terminar el proyecto.", si: "Entregar el proyecto el 11 de diciembre de 2026.", tip: "Pon una fecha límite y, si la meta es larga, fechas intermedias. Sin plazo, lo urgente siempre desplaza al objetivo." }
+  ];
+
+  /* ---- tabs ---- */
+  var tabs = document.getElementById("tabs"), panel = document.getElementById("panel");
+  function showLetter(i) {
+    var L = LETTERS[i];
+    Array.prototype.forEach.call(tabs.children, function (b, j) { b.setAttribute("aria-selected", j === i ? "true" : "false"); });
+    panel.innerHTML = "";
+    var q = el("div", "question", L.k + " · " + L.q);
+    var pair = el("div", "pair");
+    var no = el("div", "no"); no.appendChild(el("span", "label tag-no", "Así no")); no.appendChild(el("p", "", L.no));
+    var si = el("div", "si"); si.appendChild(el("span", "label tag-si", "Así sí")); si.appendChild(el("p", "", L.si));
+    pair.appendChild(no); pair.appendChild(si);
+    panel.appendChild(q); panel.appendChild(pair); panel.appendChild(el("p", "tip", L.tip));
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  LETTERS.forEach(function (L, i) {
+    var b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab");
+    b.appendChild(el("span", "big", L.k)); b.appendChild(el("span", "small", L.name));
+    b.addEventListener("click", function () { showLetter(i); });
+    tabs.appendChild(b);
+  });
+  showLetter(0);
+
+  /* ---- transformer ---- */
+  var EX = [
+    { title: "Rendimiento escolar", steps: [
+      [["Quiero mejorar en la escuela.", null]],
+      [["Quiero ", null], ["subir mi promedio en Gestión de Proyectos", "S"], [".", null]],
+      [["Quiero ", null], ["subir mi promedio en Gestión de Proyectos", "S"], [" ", null], ["de 8.0 a 8.5", "M"], [".", null]],
+      [["Quiero ", null], ["subir mi promedio en Gestión de Proyectos", "S"], [" ", null], ["de 8.0 a 8.5", "M"], [" ", null], ["estudiando 5 horas por semana", "A"], [".", null]],
+      [["Quiero ", null], ["subir mi promedio en Gestión de Proyectos", "S"], [" ", null], ["de 8.0 a 8.5", "M"], [" ", null], ["estudiando 5 horas por semana", "A"], [", ", null], ["para conservar mi beca", "R"], [".", null]],
+      [["Quiero ", null], ["subir mi promedio en Gestión de Proyectos", "S"], [" ", null], ["de 8.0 a 8.5", "M"], [" ", null], ["estudiando 5 horas por semana", "A"], [", ", null], ["para conservar mi beca", "R"], [" ", null], ["antes del 11 de diciembre de 2026", "T"], [".", null]]
+    ]},
+    { title: "Hábito de estudio", steps: [
+      [["Quiero leer más.", null]],
+      [["Quiero ", null], ["leer libros técnicos de programación", "S"], [".", null]],
+      [["Quiero ", null], ["leer libros técnicos de programación", "S"], [": ", null], ["3 libros completos", "M"], [".", null]],
+      [["Quiero ", null], ["leer libros técnicos de programación", "S"], [": ", null], ["3 libros completos", "M"], [", ", null], ["a razón de 20 páginas al día", "A"], [".", null]],
+      [["Quiero ", null], ["leer libros técnicos de programación", "S"], [": ", null], ["3 libros completos", "M"], [", ", null], ["a razón de 20 páginas al día", "A"], [", ", null], ["porque los necesito para mi proyecto terminal", "R"], [".", null]],
+      [["Quiero ", null], ["leer libros técnicos de programación", "S"], [": ", null], ["3 libros completos", "M"], [", ", null], ["a razón de 20 páginas al día", "A"], [", ", null], ["porque los necesito para mi proyecto terminal", "R"], [", ", null], ["antes del 30 de enero de 2027", "T"], [".", null]]
+    ]}
+  ];
+  var exI = 0, stI = 0;
+  var exBox = document.getElementById("examples"), goal = document.getElementById("goal"), legend = document.getElementById("legend");
+  function renderGoal() {
+    var parts = EX[exI].steps[stI];
+    goal.innerHTML = "";
+    parts.forEach(function (p) { if (p[1]) { var m = el("span", "mark", p[0]); m.title = "Criterio " + p[1]; goal.appendChild(m); } else goal.appendChild(document.createTextNode(p[0])); });
+    var present = {}; parts.forEach(function (p) { if (p[1]) present[p[1]] = true; });
+    legend.innerHTML = "";
+    LETTERS.forEach(function (L) { legend.appendChild(el("span", "chip" + (present[L.k] ? " on" : ""), L.k + " " + L.name)); });
+    document.getElementById("prev").disabled = stI === 0;
+    document.getElementById("next").disabled = stI === EX[exI].steps.length - 1;
+  }
+  EX.forEach(function (e, i) {
+    var b = el("button", "btn", e.title); b.type = "button"; b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+    b.addEventListener("click", function () { exI = i; stI = 0; Array.prototype.forEach.call(exBox.children, function (c, j) { c.setAttribute("aria-pressed", j === i ? "true" : "false"); }); renderGoal(); });
+    exBox.appendChild(b);
+  });
+  document.getElementById("prev").addEventListener("click", function () { if (stI > 0) { stI--; renderGoal(); } });
+  document.getElementById("next").addEventListener("click", function () { if (stI < EX[exI].steps.length - 1) { stI++; renderGoal(); } });
+  renderGoal();
+
+  /* ---- builder ---- */
+  var ids = ["s", "m", "a", "r", "t"], F = {};
+  ids.forEach(function (k) { F[k] = document.getElementById("f-" + k); F[k].addEventListener("input", updateBuilder); });
+  function fmtDate(v) {
+    if (!v) return "";
+    var d = new Date(v + "T12:00:00"); if (isNaN(d)) return "";
+    return d.toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
+  }
+  function builderText() {
+    var s = F.s.value.trim(), m = F.m.value.trim(), a = F.a.value.trim(), r = F.r.value.trim(), t = fmtDate(F.t.value);
+    var out = [];
+    if (s) out.push("Quiero " + s + (m ? " " + m : "") + ".");
+    else if (m) out.push("Meta medida como: " + m + ".");
+    if (a) out.push("Lo lograré " + a + ".");
+    if (r) out.push("Es relevante porque " + r + ".");
+    if (t) out.push("Fecha límite: " + t + ".");
+    return out.join(" ");
+  }
+  function updateBuilder() {
+    var s = F.s.value.trim(), m = F.m.value.trim(), a = F.a.value.trim(), r = F.r.value.trim();
+    var date = F.t.value ? new Date(F.t.value + "T23:59:59") : null;
+    var res = {
+      S: s.length >= 15 && s.split(/\s+/).length >= 3,
+      M: /\d/.test(m),
+      A: a.length >= 10,
+      R: r.length >= 10,
+      T: !!date && !isNaN(date) && date.getTime() > Date.now()
+    };
+    var msgs = {
+      S: res.S ? "El objetivo nombra una acción concreta." : "Describe la acción con al menos tres palabras específicas.",
+      M: res.M ? "Hay una cifra con la cual comprobar el resultado." : "Agrega un número, porcentaje o cantidad.",
+      A: res.A ? "Indicaste cómo lo harás." : "Explica con qué tiempo o recursos lo lograrás.",
+      R: res.R ? "Indicaste por qué importa." : "Explica con qué meta mayor se relaciona.",
+      T: res.T ? "La fecha límite es posterior a hoy." : "Elige una fecha posterior a hoy."
+    };
+    var ul = document.getElementById("checks"); ul.innerHTML = ""; var n = 0;
+    LETTERS.forEach(function (L) {
+      var li = document.createElement("li"); if (res[L.k]) { li.className = "ok"; n++; }
+      li.appendChild(el("span", "k", L.k)); li.appendChild(el("span", "t", msgs[L.k])); ul.appendChild(li);
+    });
+    document.getElementById("meter").style.width = (n * 20) + "%";
+    var txt = builderText();
+    document.getElementById("sentence").textContent = txt || "Tu objetivo aparecerá aquí.";
+  }
+  document.getElementById("copy").addEventListener("click", function () {
+    var txt = builderText(), note = document.getElementById("copied");
+    function done(ok) { note.textContent = ok ? "Copiado." : "No se pudo copiar. Selecciona el texto manualmente."; }
+    try { navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { selectSentence(); done(false); }); }
+    catch (e) { selectSentence(); done(false); }
+  });
+  function selectSentence() {
+    try { var r = document.createRange(); r.selectNodeContents(document.getElementById("sentence")); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {}
+  }
+  updateBuilder();
+
+  /* ---- quiz ---- */
+  var QZ = [
+    { t: "Voy a estudiar más programación todos los días de octubre y noviembre para el examen final de Estructuras de Datos.", a: "M", why: "Dice cuándo y para qué, pero no cuánto. “Más” no se puede comprobar. Falta una cantidad de horas o un resultado esperado." },
+    { t: "Voy a entregar 12 de 12 prácticas de Bases de Datos completas.", a: "T", why: "Es específico y medible, pero no tiene plazo. Falta decir para qué fecha o en qué periodo." },
+    { t: "Voy a dormir 4 horas diarias y estudiar 14 para subir mi promedio de 7.0 a 10 en dos semanas.", a: "A", why: "Tiene cifras y plazo, pero no es realista y pone en riesgo tu salud. Un objetivo alcanzable considera tus límites." },
+    { t: "Voy a mejorar un 20% antes del 30 de noviembre.", a: "S", why: "Hay porcentaje y fecha, pero no se sabe qué va a mejorar. Falta nombrar la materia, la habilidad o el resultado." },
+    { t: "Voy a completar 3 cursos de cocina en línea antes del 31 de diciembre, aunque este año busco conseguir mis prácticas profesionales en desarrollo de software.", a: "R", why: "Cumple los demás criterios, pero no se relaciona con la meta principal del año. Falta relevancia." }
+  ];
+  var qi = 0, score = 0, answered = false;
+  var qopts = document.getElementById("qopts"), qfb = document.getElementById("qfb"), qnext = document.getElementById("qnext");
+  function renderQ() {
+    var Q = QZ[qi]; answered = false;
+    document.getElementById("qcount").textContent = "Pregunta " + (qi + 1) + " de " + QZ.length;
+    document.getElementById("qscore").textContent = "Aciertos: " + score;
+    document.getElementById("qtext").textContent = Q.t;
+    qopts.innerHTML = ""; qfb.textContent = ""; qnext.hidden = true;
+    LETTERS.forEach(function (L) {
+      var b = el("button", "btn", L.k); b.type = "button"; b.setAttribute("aria-label", L.name);
+      b.addEventListener("click", function () {
+        if (answered) return; answered = true;
+        var ok = L.k === Q.a; if (ok) score++;
+        Array.prototype.forEach.call(qopts.children, function (c) { if (c.textContent === Q.a) c.classList.add("right"); });
+        if (!ok) b.classList.add("wrong");
+        qfb.textContent = (ok ? "Correcto. " : "Falta " + LETTERS.filter(function (x) { return x.k === Q.a; })[0].name.toLowerCase() + ". ") + Q.why;
+        document.getElementById("qscore").textContent = "Aciertos: " + score;
+        qnext.hidden = false; qnext.textContent = qi === QZ.length - 1 ? "Ver resultado" : "Siguiente";
+      });
+      qopts.appendChild(b);
+    });
+  }
+  var finished = false;
+  qnext.addEventListener("click", function () {
+    if (finished) { finished = false; qi = 0; score = 0; renderQ(); return; }
+    if (qi < QZ.length - 1) { qi++; renderQ(); }
+    else {
+      finished = true;
+      document.getElementById("qtext").textContent = "Resultado: " + score + " de " + QZ.length + ".";
+      qopts.innerHTML = ""; qfb.textContent = score === QZ.length ? "Identificaste todos los criterios faltantes." : "Repasa los criterios con la sección de las cinco letras y vuelve a intentarlo.";
+      qnext.textContent = "Reiniciar";
+    }
+  });
+  renderQ();
+})();
+</script>
+
+</body>
+</html>
